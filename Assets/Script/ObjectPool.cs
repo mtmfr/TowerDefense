@@ -5,6 +5,10 @@ using UnityEngine;
 
 public static class ObjectPool
 {
+    private static List<MonoBehaviour> inactiveObjects = new();
+    private static List<MonoBehaviour> activeObjects = new();
+
+    #region old
     /// <summary>
     /// Check if there are any inactive gameObject with the same type as the one in the argument
     /// </summary>
@@ -15,25 +19,6 @@ public static class ObjectPool
     {
         // Get the type of the object to check in advance to avoid calling GetType() on each iteration
         Type targetType = objectToCheck.GetType();
-
-        // Retrieve all objects of type T (including inactive objects)
-        List<T> Tobjects = GameObject.FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None).Where(T =>
-        {
-            //check the type of the current object
-            bool hasRightType = T.GetType() == targetType;
-
-            //check if the current check object is inactive
-            bool isActive = T.gameObject.activeInHierarchy;
-
-            return hasRightType && !isActive;
-        }).ToList();
-
-        return Tobjects.Count != 0;
-    }
-    public static bool IsAnyObjectInactive<T>(Type type) where T : MonoBehaviour
-    {
-        // Get the type of the object to check in advance to avoid calling GetType() on each iteration
-        Type targetType = type;
 
         // Retrieve all objects of type T (including inactive objects)
         List<T> Tobjects = GameObject.FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None).Where(T =>
@@ -72,5 +57,60 @@ public static class ObjectPool
         List<T> values = GameObject.FindObjectsByType<T>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).ToList();
 
         return values;
+    }
+    #endregion
+
+    public static T GetInactive<T>(T toActivate) where T : MonoBehaviour
+    {
+        if (!inactiveObjects.Contains(toActivate))
+            GameObject.Instantiate(toActivate, Vector3.zero, Quaternion.identity);
+        else
+        {
+            toActivate.gameObject.SetActive(true);
+            inactiveObjects.Remove(toActivate);
+        }
+
+        activeObjects.Add(toActivate);
+        return toActivate;
+    }
+
+    public static T GetInactive<T>(T toActivate, Transform transform) where T : MonoBehaviour
+    {
+        if (!inactiveObjects.Contains(toActivate))
+            GameObject.Instantiate(toActivate, transform);
+        else
+        {
+            toActivate.transform.position = transform.position;
+            toActivate.transform.rotation = transform.rotation;
+            toActivate.gameObject.SetActive(true);
+
+            inactiveObjects.Remove(toActivate);
+        }
+
+        activeObjects.Add(toActivate);
+        return toActivate;
+    }
+
+    public static T GetInactive<T>(T toActivate, Vector3 position, Quaternion rotation) where T : MonoBehaviour
+    {
+        if (!inactiveObjects.Contains(toActivate))
+            toActivate = GameObject.Instantiate(toActivate, position, rotation);
+        else
+        {
+            toActivate.transform.SetPositionAndRotation(position, rotation);
+            toActivate.gameObject.SetActive(true);
+
+            inactiveObjects.Remove(toActivate);
+        }
+
+        activeObjects.Add(toActivate);
+        return toActivate;
+    }
+
+    public static void ObjectSetInactive(MonoBehaviour toDeactivate)
+    {
+        toDeactivate.gameObject.SetActive(false);
+        inactiveObjects.Add(toDeactivate);
+        activeObjects.Remove(toDeactivate);
     }
 }

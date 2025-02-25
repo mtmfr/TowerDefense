@@ -6,6 +6,7 @@ public class Tile : MonoBehaviour
 
     public bool isAvailable = true;
     public bool isRoad = false;
+    public bool isTurretPoint = false;
 
     public int xId { get; private set; }
     public int yId { get; private set; }

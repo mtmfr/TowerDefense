@@ -13,7 +13,9 @@ public static class GameManager
 public enum GameState
 {
     Menu,
+    GeneratingPath,
     Game,
+    Shop,
     Pause,
-    GameOver
+    GameOver,
 }

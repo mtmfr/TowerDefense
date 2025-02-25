@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ public class GridManager : MonoBehaviour
     public static GridManager instance { get; private set; }
 
     [Header("Grid")]
+    [SerializeField] private Transform gridParent;
     [SerializeField] private int gridLenght;
     [SerializeField] private int gridWidth;
 
@@ -18,14 +20,15 @@ public class GridManager : MonoBehaviour
     private Tile startTile;
 
     [Header("Grid Color")]
+    [SerializeField] private Material startMaterial;
     [SerializeField] private Material gridMaterial;
     [SerializeField] private Material pathMaterial;
 
     private List<Tile> startingTiles = new();
     private List<Tile> endingTiles = new();
-    private List<Tile> tiles = new();
+    public List<Tile> tiles { get; private set; } = new();
 
-    private List<Tile> path = new();
+    public List<Tile> path { get; private set; } = new();
 
     private Bounds meshBounds;
 
@@ -42,19 +45,16 @@ public class GridManager : MonoBehaviour
     void Start()
     {
         meshBounds = baseTile.GetComponent<MeshRenderer>().bounds;
+        gridParent.transform.position = Vector3.zero;
         SpawnGrid();
     }
-
-    public event Action<List<Tile>> OnGridFininshedSpawning;
 
     #region Grid spawn
     private void SpawnGrid()
     {
         ResetGrid();
 
-        float xDisplacement = (gridLenght - 1) / gridLenght;
-        float zDisplacement = (gridWidth - 1) / gridWidth;
-        Vector3 displacement = new Vector3(gridLenght * xDisplacement, 0, gridWidth * zDisplacement);
+        Vector3 displacement = new Vector3(gridLenght, 0, gridWidth);
 
         Vector3 basePosition = transform.position - Vector3.Scale(meshBounds.extents, displacement);
         for (int column = 0; column < gridLenght; column++)
@@ -65,18 +65,10 @@ public class GridManager : MonoBehaviour
 
                 Vector3 position = basePosition + offset * espacement;
 
-                Tile tileToSpawn;
+                Tile tileToSpawn = ObjectPool.GetInactive<Tile>(baseTile, position, Quaternion.identity);
 
-                if (ObjectPool.IsAnyObjectInactive(baseTile))
-                {
-                    tileToSpawn = ObjectPool.GetInactiveObject(baseTile);
-                    tileToSpawn.transform.position = position;
-                    tileToSpawn.gameObject.SetActive(true);
-                }
-                else
-                {
-                    tileToSpawn = Instantiate(baseTile, position, Quaternion.identity);
-                }
+                //if (tileToSpawn == null)
+                //    tileToSpawn = Instantiate(baseTile, position, Quaternion.identity);
 
                 if (row == 0)
                 {
@@ -90,19 +82,20 @@ public class GridManager : MonoBehaviour
                 tileToSpawn.GetComponent<MeshRenderer>().material = gridMaterial;
                 tileToSpawn.name = $"{row}, {column}";
                 tiles.Add(tileToSpawn);
+                tileToSpawn.transform.SetParent(gridParent, true);
             }
         }
-
-        OnGridFininshedSpawning?.Invoke(tiles);
 
         GetStartPosition();
     }
 
+    public event Action<Tile> OnStartingTileDecided;
     private void GetStartPosition()
     {
         int randomId = UnityEngine.Random.Range(0, startingTiles.Count);
 
         startTile = startingTiles[randomId];
+        OnStartingTileDecided?.Invoke(startTile);
         FindPath();
     }
 
@@ -205,6 +198,7 @@ public class GridManager : MonoBehaviour
     {
         currentTile.isRoad = false;
         currentTile.isAvailable = false;
+        currentTile.SetRendererMaterial(gridMaterial);
 
         int newCurrentTileId = path.Count - 2;
         currentTile = path[newCurrentTileId];
@@ -221,8 +215,16 @@ public class GridManager : MonoBehaviour
     {
         path.Clear();
 
-        Tile currentTile = startTile;
+        StartCoroutine(PathGenerationVisual());
 
+        GameManager.UpdateGameState(GameState.Game);
+    }
+
+    public event Action OnPathGenerated;
+    private IEnumerator PathGenerationVisual()
+    {
+        Tile currentTile = startTile;
+        currentTile.SetRendererMaterial(startMaterial);
         currentTile.isRoad = true;
 
         path.Add(currentTile);
@@ -247,14 +249,16 @@ public class GridManager : MonoBehaviour
                 //Completely restart the path finding if we're stuck in the loop
                 if (rollbackLoopCount > Mathf.Max(gridWidth, gridLenght))
                 {
-                    foreach(Tile tile in tiles) 
+                    foreach (Tile tile in tiles)
                     {
                         tile.SetRendererMaterial(gridMaterial);
                     }
 
                     path.Clear();
                     currentTile = startTile;
+                    yield return new WaitForSeconds(0.1f);
                 }
+                yield return new WaitForSeconds(0.1f);
 
                 if (adjacentTiles.Count == 0)
                     continue;
@@ -264,14 +268,15 @@ public class GridManager : MonoBehaviour
             currentTile = GetNextTile(adjacentTiles);
             currentTile.isRoad = true;
 
+            currentTile.SetRendererMaterial(pathMaterial);
+
+            yield return new WaitForSeconds(0.1f);
+
             if (endingTiles.Contains(currentTile))
                 break;
         }
 
-        foreach (Tile tile in path)
-        {
-            tile.SetRendererMaterial(pathMaterial);
-        }
+        OnPathGenerated?.Invoke();
     }
         #endregion
 }
