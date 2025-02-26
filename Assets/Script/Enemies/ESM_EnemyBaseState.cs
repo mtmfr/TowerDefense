@@ -9,12 +9,22 @@ public abstract class ESM_EnemyBaseState
 
     }
 
+    public virtual void OnUpdate()
+    {
+
+    }
+
     public virtual void OnFixedUpdate()
     {
 
     }
 
     public virtual void OnCollisionEnter(Collision collision)
+    {
+
+    }
+
+    public virtual void OnCollisionExit(Collision collision)
     {
 
     }

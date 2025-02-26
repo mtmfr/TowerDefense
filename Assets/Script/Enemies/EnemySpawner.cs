@@ -3,6 +3,7 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     private Tile spawnTile;
+    [SerializeField] GameObject enemyTarget;
     [SerializeField] private Enemy enemy;
 
     private void OnEnable()

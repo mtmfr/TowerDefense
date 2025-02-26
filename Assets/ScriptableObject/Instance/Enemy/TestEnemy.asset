@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: TestEnemy
   m_EditorClassIdentifier: 
   <health>k__BackingField: 10
-  <speed>k__BackingField: 3
+  <speed>k__BackingField: 5
   <attack>k__BackingField: 0
+  <attackSpeed>k__BackingField: 0

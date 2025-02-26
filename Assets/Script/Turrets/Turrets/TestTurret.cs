@@ -20,9 +20,6 @@ public class TestTurret : BaseTurrets
             attackTimer = 0;
         }            
         else
-        {
             attackTimer += Time.deltaTime;
-        }
-
     }
 }

@@ -35,6 +35,14 @@ public class ESM_MovingState : ESM_EnemyBaseState
             MoveToNextTile();
     }
 
+    public override void OnCollisionEnter(Collision collision)
+    {
+        base.OnCollisionEnter(collision);
+
+        if (!collision.gameObject.TryGetComponent<Tile>(out _))
+            enemy.ChangeState(new ESM_AttackingState(enemy, enemy.attackPower, enemy.delayBetweenAttack, collision.gameObject));
+    }
+
     private void SetTiles()
     {
         List<Tile> pathCopy = new(path);
@@ -64,10 +72,7 @@ public class ESM_MovingState : ESM_EnemyBaseState
         currentTile = nextTile;
 
         if (currentTile == destination)
-        {
-            enemy.ChangeState(new ESM_AttackingState(enemy, enemy.attackPower, enemy.delayBetweenAttack));
             return;
-        }
 
         int nextTileId = path.IndexOf(currentTile) + 1;
 

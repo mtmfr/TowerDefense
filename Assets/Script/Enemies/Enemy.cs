@@ -20,9 +20,7 @@ public abstract class Enemy : MonoBehaviour
     public int attackPower { get; private set; }
     public float delayBetweenAttack { get; private set; }
 
-
     public Tile currentTile;
-
 
     private void Awake()
     {
@@ -44,13 +42,18 @@ public abstract class Enemy : MonoBehaviour
         currentState = new ESM_MovingState(this, movementSpeed, GridManager.instance.path);
         currentState.OnEnterState();
 
-        HealthEvent.OnDamageReceive += ReceiveDamage;
+        HealthEvent.OnDamageReceived += ReceiveDamage;
     }
 
     private void OnDisable()
     {
         currentState = null;
-        HealthEvent.OnDamageReceive -= ReceiveDamage;
+        HealthEvent.OnDamageReceived -= ReceiveDamage;
+    }
+
+    private void Update()
+    {
+        currentState.OnUpdate();
     }
 
     private void FixedUpdate()
@@ -61,6 +64,11 @@ public abstract class Enemy : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         currentState.OnCollisionEnter(collision);
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        currentState.OnCollisionExit(collision);
     }
 
     public void ChangeState(ESM_EnemyBaseState nextState)
@@ -98,6 +106,7 @@ public abstract class Enemy : MonoBehaviour
             renderer.material = damagedColor;
         }
         yield return new WaitForSeconds(0.2f);
+
         foreach (MeshRenderer renderer in renderers)
         {
             renderer.material = baseMaterial;

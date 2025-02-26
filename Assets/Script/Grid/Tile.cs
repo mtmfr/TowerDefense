@@ -11,7 +11,7 @@ public class Tile : MonoBehaviour
     public int xId { get; private set; }
     public int yId { get; private set; }
 
-    private void Start()
+    private void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>();
     }

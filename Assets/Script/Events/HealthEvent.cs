@@ -3,10 +3,10 @@ using System;
 
 public static class HealthEvent
 {
-    public static event Action<int, int> OnDamageReceive;
+    public static event Action<int, int> OnDamageReceived;
     public static void InflictDamage(int damagedObjectInstanceId, int damageDealt)
     {
-        OnDamageReceive?.Invoke(damagedObjectInstanceId, damageDealt);
+        OnDamageReceived?.Invoke(damagedObjectInstanceId, damageDealt);
     }
 
     public static event Action<int, int> OnHealthHealed;

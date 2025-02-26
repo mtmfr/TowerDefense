@@ -21,6 +21,9 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Material gridMaterial;
     [SerializeField] private Material pathMaterial;
 
+    [Header("Target")]
+    [SerializeField] private GameObject enemyTarget;
+
     private List<Tile> startingTiles = new();
     private List<Tile> endingTiles = new();
     public List<Tile> tiles { get; private set; } = new();
@@ -264,7 +267,10 @@ public class GridManager : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
 
             if (endingTiles.Contains(currentTile))
+            {
+                enemyTarget.transform.position = currentTile.transform.position;
                 break;
+            }
         }
 
         OnPathGenerated?.Invoke();
