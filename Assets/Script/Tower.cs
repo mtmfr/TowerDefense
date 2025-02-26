@@ -3,16 +3,31 @@ using UnityEngine;
 
 public class Tower : MonoBehaviour
 {
-    [SerializeField] int health;
+    [SerializeField] private int maxHealth;
+    private int health;
 
     private void OnEnable()
     {
+        health = maxHealth;
+
         HealthEvent.OnDamageReceived += TakeDamage;
+
+        GameManager.OnGameStateChange += SetHealthUI;
     }
 
     private void OnDisable()
     {
         HealthEvent.OnDamageReceived -= TakeDamage;
+
+        GameManager.OnGameStateChange -= SetHealthUI;
+    }
+
+    private void SetHealthUI(GameState gameState)
+    {
+        if (gameState != GameState.Game)
+            return;
+
+        GameUIEvent.SetHealth(maxHealth);
     }
 
     private void TakeDamage(int id, int damageTaken)
@@ -25,7 +40,7 @@ public class Tower : MonoBehaviour
         else
             Death();
 
-        Debug.Log("aieuouh");
+        GameUIEvent.UpdateHealth(health);
     }
 
     private void Death()

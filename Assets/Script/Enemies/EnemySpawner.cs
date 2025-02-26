@@ -26,7 +26,6 @@ public class EnemySpawner : MonoBehaviour
 
     private void StartSpawn()
     {
-        GameManager.UpdateGameState(GameState.Game);
         Instantiate(enemy, SetEnemySpawnPosition(), Quaternion.identity);
     }
 

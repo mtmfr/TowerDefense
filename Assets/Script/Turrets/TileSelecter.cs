@@ -10,6 +10,9 @@ public class TileSelecter : MonoBehaviour
 
     private new Camera camera;
     [SerializeField] BaseTurrets turret;
+
+    private bool canPlaceTurret;
+
     private void Awake()
     {
         inputs = new();
@@ -24,16 +27,23 @@ public class TileSelecter : MonoBehaviour
     {
         inputs.Enable();
         inputs.Player.LeftMouseClick.performed += GetSelectedTilePosition;
+
+        GameManager.OnGameStateChange += UpdateCanPlaceTurret;
     }
 
     private void OnDisable()
     {
         inputs.Disable();
         inputs.Player.LeftMouseClick.performed -= GetSelectedTilePosition;
+
+        GameManager.OnGameStateChange -= UpdateCanPlaceTurret;
     }
 
     private void GetSelectedTilePosition(InputAction.CallbackContext context)
     {
+        if (!canPlaceTurret)
+            return;
+
         Tile closestTile = GridManager.instance.tiles.OrderBy(tile =>
         {
             Vector3 tilePositionOnScreen = camera.WorldToScreenPoint(tile.transform.position);
@@ -56,5 +66,14 @@ public class TileSelecter : MonoBehaviour
 
         tile.isTurretPoint = true;
         Instantiate(turret, position, Quaternion.identity);
+    }
+
+    private void UpdateCanPlaceTurret(GameState gameState)
+    {
+        canPlaceTurret = gameState switch
+        {
+            GameState.Game => true,
+            _ => false
+        };
     }
 }

@@ -46,12 +46,24 @@ public class GridManager : MonoBehaviour
     {
         meshBounds = baseTile.GetComponent<MeshRenderer>().bounds;
         gridParent.transform.position = Vector3.zero;
-        SpawnGrid();
+    }
+
+    private void OnEnable()
+    {
+        GameManager.OnGameStateChange += SpawnGrid;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.OnGameStateChange -= SpawnGrid;
     }
 
     #region Grid spawn
-    private void SpawnGrid()
+    private void SpawnGrid(GameState gameState)
     {
+        if (gameState != GameState.GeneratingPath)
+            return;
+
         ResetGrid();
 
         Vector3 displacement = new Vector3(gridLenght, 0, gridWidth);
@@ -107,6 +119,8 @@ public class GridManager : MonoBehaviour
     #endregion
 
     #region Path finding
+
+    #region next tile
     /// <summary>
     /// Get the available tiles adjacent of the current one
     /// </summary>
@@ -144,12 +158,14 @@ public class GridManager : MonoBehaviour
 
         return nextTile;
     }
+    #endregion
 
+    #region Tile availability
     /// <summary>
     /// Control the availability of the adjacent tiles of the current tile
     /// </summary>
     /// <param name="currentTile">The last tile of the path</param>
-    private void SetAdjacentTileAvailiblity(Tile currentTile)
+    private void SetAdjacentTileAvailability(Tile currentTile)
     {
         List<Tile> adjacentTiles = GetAvailableAdjacentTiles(currentTile);
         //For each of the adjacentTile check if they will border more than 2 tiles
@@ -201,6 +217,7 @@ public class GridManager : MonoBehaviour
 
         return currentTile;
     }
+    #endregion
 
     /// <summary>
     /// Create the path the enemy will go through
@@ -210,8 +227,6 @@ public class GridManager : MonoBehaviour
         path.Clear();
 
         StartCoroutine(PathGenerationVisual());
-
-        GameManager.UpdateGameState(GameState.Game);
     }
 
     public event Action OnPathGenerated;
@@ -228,7 +243,7 @@ public class GridManager : MonoBehaviour
 
         while (true)
         {
-            SetAdjacentTileAvailiblity(currentTile);
+            SetAdjacentTileAvailability(currentTile);
             List<Tile> adjacentTiles = GetAvailableAdjacentTiles(currentTile);
 
             if (adjacentTiles.Count == 0)
@@ -273,6 +288,7 @@ public class GridManager : MonoBehaviour
             }
         }
 
+        GameManager.UpdateGameState(GameState.Game);
         OnPathGenerated?.Invoke();
     }
         #endregion
