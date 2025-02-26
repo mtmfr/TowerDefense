@@ -11,6 +11,18 @@ public class Tile : MonoBehaviour
     public int xId { get; private set; }
     public int yId { get; private set; }
 
+    private void Start()
+    {
+        meshRenderer = GetComponent<MeshRenderer>();
+    }
+
+    private void OnDisable()
+    {
+        isAvailable = true;
+        isRoad = false;
+        isTurretPoint = false;
+    }
+
     public void SetId(int newXId, int newYId)
     {
         xId = newXId;
@@ -19,7 +31,6 @@ public class Tile : MonoBehaviour
 
     public void SetRendererMaterial(Material newMaterial)
     {
-        meshRenderer = GetComponent<MeshRenderer>();
         meshRenderer.material = newMaterial;
     }
 }

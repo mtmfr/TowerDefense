@@ -12,9 +12,6 @@ public class GridManager : MonoBehaviour
     [SerializeField] private int gridLenght;
     [SerializeField] private int gridWidth;
 
-    [Header("Grid modifier")]
-    [SerializeField, Min(1)] private float espacement;
-
     [Header("Tile")]
     [SerializeField] private Tile baseTile;
     private Tile startTile;
@@ -63,12 +60,9 @@ public class GridManager : MonoBehaviour
             {
                 Vector3 offset = Vector3.Scale(meshBounds.size, new Vector3(column, 0, row));
 
-                Vector3 position = basePosition + offset * espacement;
+                Vector3 position = basePosition + offset;
 
                 Tile tileToSpawn = ObjectPool.GetInactive<Tile>(baseTile, position, Quaternion.identity);
-
-                //if (tileToSpawn == null)
-                //    tileToSpawn = Instantiate(baseTile, position, Quaternion.identity);
 
                 if (row == 0)
                 {
@@ -105,10 +99,7 @@ public class GridManager : MonoBehaviour
         startingTiles.Clear();
         endingTiles.Clear();
 
-        foreach (Tile activeTile in ObjectPool.GetActiveObjects<Tile>())
-        {
-            activeTile.gameObject.SetActive(false);
-        }
+        ObjectPool.SetObjectInactive<Tile>(baseTile);
     }
     #endregion
 
