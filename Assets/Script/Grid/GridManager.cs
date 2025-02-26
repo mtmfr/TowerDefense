@@ -261,11 +261,17 @@ public class GridManager : MonoBehaviour
                     foreach (Tile tile in tiles)
                     {
                         tile.SetRendererMaterial(gridMaterial);
+                        tile.isRoad = false;
+                    }
+
+                    foreach (Tile tile in startingTiles)
+                    {
+                        tile.isAvailable = false;
                     }
 
                     path.Clear();
                     currentTile = startTile;
-                    yield return new WaitForSeconds(0.1f);
+                    continue;
                 }
                 yield return new WaitForSeconds(0.1f);
 
@@ -288,7 +294,7 @@ public class GridManager : MonoBehaviour
             }
         }
 
-        GameManager.UpdateGameState(GameState.Game);
+        GameManager.UpdateGameState(GameState.Shop);
         OnPathGenerated?.Invoke();
     }
         #endregion

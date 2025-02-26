@@ -1,4 +1,5 @@
-using System;
+using NUnit.Framework;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -53,8 +54,18 @@ public class TileSelecter : MonoBehaviour
             return Vector3.Distance(tilePositionOnScreen, mousePositionOnScreen);
         }).FirstOrDefault();
 
+        if (!IsMouseOverTile())
+            return;
+
         if (!closestTile.isTurretPoint && !closestTile.isRoad)
             PlaceNewTurret(closestTile);
+    }
+
+    private bool IsMouseOverTile()
+    {
+        Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
+
+        return Physics.Raycast(ray, out RaycastHit hit);
     }
 
     private void PlaceNewTurret(Tile tile)
@@ -72,7 +83,7 @@ public class TileSelecter : MonoBehaviour
     {
         canPlaceTurret = gameState switch
         {
-            GameState.Game => true,
+            GameState.Shop => true,
             _ => false
         };
     }

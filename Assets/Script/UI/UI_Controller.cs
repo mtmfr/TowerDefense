@@ -4,6 +4,7 @@ public class UI_Controller : MonoBehaviour
 {
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject gameUI;
+    [SerializeField] private GameObject betweenWave;
     [SerializeField] private GameObject pauseUI;
     [SerializeField] private GameObject gameOverUI;
 
@@ -34,6 +35,13 @@ public class UI_Controller : MonoBehaviour
         {
             GameState.GeneratingPath => true,
             GameState.Game => true,
+            GameState.Shop => true,
+            _ => false
+        });
+
+        betweenWave.SetActive(gameState switch
+        {
+            GameState.Shop => true,
             _ => false
         });
 

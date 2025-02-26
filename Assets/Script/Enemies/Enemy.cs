@@ -22,6 +22,7 @@ public abstract class Enemy : MonoBehaviour
 
     public Tile currentTile;
 
+    #region Unity function
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -37,7 +38,7 @@ public abstract class Enemy : MonoBehaviour
         health = enemySo.health;
         movementSpeed = enemySo.speed;
         attackPower = enemySo.attack;
-        delayBetweenAttack = enemySo.attackSpeed;
+        delayBetweenAttack = enemySo.attackDelay;
 
         currentState = new ESM_MovingState(this, movementSpeed, GridManager.instance.path);
         currentState.OnEnterState();
@@ -70,7 +71,12 @@ public abstract class Enemy : MonoBehaviour
     {
         currentState.OnCollisionExit(collision);
     }
+    #endregion
 
+    /// <summary>
+    /// update the state of the enemy state machine
+    /// </summary>
+    /// <param name="nextState">the next state of the state machine. (need to be created using new())</param>
     public void ChangeState(ESM_EnemyBaseState nextState)
     {
         currentState.OnExitState();
@@ -78,6 +84,7 @@ public abstract class Enemy : MonoBehaviour
         currentState.OnEnterState();
     }
 
+    #region Damage receive
     private void ReceiveDamage(int id, int damageReceived)
     {
         if (gameObject.GetInstanceID() != id)
@@ -112,4 +119,5 @@ public abstract class Enemy : MonoBehaviour
             renderer.material = baseMaterial;
         }
     }
+    #endregion
 }
