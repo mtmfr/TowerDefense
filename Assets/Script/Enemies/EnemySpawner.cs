@@ -76,9 +76,10 @@ public class EnemySpawner : MonoBehaviour
         if (enemies.Count == 0)
             Debug.LogError("No enemies in spawnableEnemies", this);
 
+        //Raise out of memory exception
 
         //Get the enemies that will be spawned
-        while (WaveCost > 0)
+        /*while (WaveCost > 0)
         {
             int randomEnemyId = Random.Range(0, enemies.Count);
 
@@ -106,7 +107,7 @@ public class EnemySpawner : MonoBehaviour
 
             if (enemies.Count == 0)
                 break;
-        }
+        }*/
     }
     #endregion
 
