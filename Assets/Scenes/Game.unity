@@ -2226,7 +2226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da19e7976fc978443a1fe3d9282ae07f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delayBetweenEnemies: 0.3
+  delayBetweenEnemies: 1
   enemyTarget: {fileID: 1747262174}
   spawnableEnemies:
   - {fileID: 4027932426922736116, guid: df09502d495954943bac0771fe5b4b80, type: 3}

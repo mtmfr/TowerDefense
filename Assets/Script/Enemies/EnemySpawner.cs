@@ -14,6 +14,8 @@ public class EnemySpawner : MonoBehaviour
     private List<Enemy> enemiesToSpawn = new();
     [SerializeField] private Enemy enemy;
 
+    private List<Enemy> enemiesInWave = new();
+
     private int currentWave = 0;
 
     private bool canSpawnEnemies = false;
@@ -24,6 +26,8 @@ public class EnemySpawner : MonoBehaviour
         GameManager.OnGameStateChange += UpdateCanSpawnEnemies;
 
         GridManager.instance.OnStartingTileDecided += SetSpawnTile;
+
+        EnemyEvent.OnDeath += RemoveEnemyId;
     }
 
     private void OnDisable()
@@ -32,6 +36,8 @@ public class EnemySpawner : MonoBehaviour
         GameManager.OnGameStateChange -= UpdateCanSpawnEnemies;
 
         GridManager.instance.OnStartingTileDecided -= SetSpawnTile;
+
+        EnemyEvent.OnDeath -= RemoveEnemyId;
     }
 
     private void Update()
@@ -47,6 +53,15 @@ public class EnemySpawner : MonoBehaviour
             GameState.Game => true,
             _ => false
         };
+    }
+
+    private void RemoveEnemyId(Enemy killedEnemy)
+    {
+        if (enemiesInWave.Contains(killedEnemy))
+            enemiesInWave.Remove(killedEnemy);
+
+        if (enemiesInWave.Count == 0 && enemiesToSpawn.Count == 0)
+            GameManager.UpdateGameState(GameState.Shop);
     }
 
     #region GetEnemiesToSpawn
@@ -69,9 +84,12 @@ public class EnemySpawner : MonoBehaviour
         if (gameState != GameState.Shop) 
             return;
 
-        int WaveCost = WaveCredit();
-
+        enemiesToSpawn.Clear();
         List<Enemy> enemies = new(spawnableEnemies);
+
+        timeSinceLastEnemy = delayBetweenEnemies;
+
+        int WaveCredit = this.WaveCredit();
 
         if (enemies.Count == 0)
             Debug.LogError("No enemies in spawnableEnemies", this);
@@ -79,26 +97,18 @@ public class EnemySpawner : MonoBehaviour
         //Raise out of memory exception
 
         //Get the enemies that will be spawned
-        /*while (WaveCost > 0)
+        while (WaveCredit > 0)
         {
             int randomEnemyId = Random.Range(0, enemies.Count);
 
             Enemy enemyToAdd = enemies[randomEnemyId];
 
-            if (enemyToAdd == null)
-            {
-                Debug.LogError("enemy to add is null", this);
-                break;
-            }
-
             int enemyCost = enemyToAdd.enemySo.waveCost;
 
-            if (WaveCost - enemyCost > 0)
-                enemiesToSpawn.Add(enemyToAdd);
-            else if (WaveCost - enemyCost == 0)
+            if (WaveCredit - enemyCost >= 0)
             {
                 enemiesToSpawn.Add(enemyToAdd);
-                break;
+                WaveCredit -= enemyCost;
             }
             else
             {
@@ -107,7 +117,7 @@ public class EnemySpawner : MonoBehaviour
 
             if (enemies.Count == 0)
                 break;
-        }*/
+        }
     }
     #endregion
 
@@ -138,16 +148,18 @@ public class EnemySpawner : MonoBehaviour
         {
             Vector3 spawnPosition = SetEnemySpawnPosition();
 
+            if (enemiesToSpawn.Count == 0)
+                return;
+
             Enemy enemy = enemiesToSpawn[0];
 
-            Enemy enemyToSpawn = ObjectPool.GetInactive<Enemy>(enemy, spawnPosition, Quaternion.identity);
+            Enemy enemyToSpawn = ObjectPool.GetObject(enemy, spawnPosition, Quaternion.identity);
+
+            enemiesInWave.Add(enemyToSpawn);
 
             enemiesToSpawn.Remove(enemy);
 
             timeSinceLastEnemy = 0;
-
-            if (enemiesToSpawn.Count == 0)
-                GameManager.UpdateGameState(GameState.Shop);
         }
         else
         {

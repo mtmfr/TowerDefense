@@ -77,7 +77,7 @@ public class GridManager : MonoBehaviour
 
                 Vector3 position = basePosition + offset;
 
-                Tile tileToSpawn = ObjectPool.GetInactive<Tile>(baseTile, position, Quaternion.identity);
+                Tile tileToSpawn = ObjectPool.GetObject<Tile>(baseTile, position, Quaternion.identity);
 
                 if (row == 0)
                 {
@@ -238,9 +238,6 @@ public class GridManager : MonoBehaviour
 
         path.Add(currentTile);
 
-        //security in case we're stuck in the while loop
-        int rollbackLoopCount = 0;
-
         while (true)
         {
             SetAdjacentTileAvailability(currentTile);
@@ -252,33 +249,11 @@ public class GridManager : MonoBehaviour
 
                 adjacentTiles = GetAvailableAdjacentTiles(currentTile);
 
-                //make sure we don't get stuck in the while loop
-                rollbackLoopCount++;
-
-                //Completely restart the path finding if we're stuck in the loop
-                if (rollbackLoopCount > Mathf.Max(gridWidth, gridLenght))
-                {
-                    foreach (Tile tile in tiles)
-                    {
-                        tile.SetRendererMaterial(gridMaterial);
-                        tile.isRoad = false;
-                    }
-
-                    foreach (Tile tile in startingTiles)
-                    {
-                        tile.isAvailable = false;
-                    }
-
-                    path.Clear();
-                    currentTile = startTile;
-                    continue;
-                }
                 yield return new WaitForSeconds(0.1f);
 
                 if (adjacentTiles.Count == 0)
                     continue;
             }
-            rollbackLoopCount = 0;
 
             currentTile = GetNextTile(adjacentTiles);
             currentTile.isRoad = true;

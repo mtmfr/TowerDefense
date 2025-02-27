@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -103,6 +104,13 @@ public abstract class Enemy : MonoBehaviour
 
     private void Death()
     {
+        foreach (MeshRenderer renderer in renderers)
+        {
+            renderer.material = baseMaterial;
+        }
+
+        ObjectPool.SetObjectInactive(this);
+        EnemyEvent.Died(this);
         gameObject.SetActive(false);
     }
 
@@ -120,4 +128,11 @@ public abstract class Enemy : MonoBehaviour
         }
     }
     #endregion
+}
+
+public static class EnemyEvent
+{
+    public static event Action<Enemy> OnDeath;
+
+    public static void Died(Enemy killedEnemy) => OnDeath?.Invoke(killedEnemy);
 }

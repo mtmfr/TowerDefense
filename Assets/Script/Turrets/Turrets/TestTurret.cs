@@ -14,7 +14,7 @@ public class TestTurret : BaseTurrets
         enemyPosition.y = turretBarrel.transform.position.y;
         turretBarrel.transform.LookAt(enemyPosition);
 
-        if (attackTimer > TimeBetweenAttack)
+        if (attackTimer > timeBetweenAttack)
         {
             HealthEvent.InflictDamage(enemyToTarget.gameObject.GetInstanceID(), attackPower);
             attackTimer = 0;

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 public class ESM_MovingState : ESM_EnemyBaseState
@@ -7,6 +8,8 @@ public class ESM_MovingState : ESM_EnemyBaseState
     private float speed;
     private List<Tile> path;
     private List<Tile> parcouredTiles = new();
+
+    private Vector3 movementDirection;
 
     private Tile currentTile;
     private Tile nextTile;
@@ -52,13 +55,18 @@ public class ESM_MovingState : ESM_EnemyBaseState
         int nextTileId = path.IndexOf(currentTile) + 1;
 
         nextTile = path[nextTileId];
+        movementDirection = nextTile.transform.position - currentTile.transform.position;
     }
 
     private void MoveToNextTile()
     {
-        Vector3 dir = nextTile.transform.position - currentTile.transform.position;
+        float distanceFromPos = Vector3.Distance(enemy.transform.position, nextTile.transform.position);
+        float distanceBetweenTiles = Vector3.Distance(currentTile.transform.position, nextTile.transform.position);
 
-        enemy.rb.linearVelocity = dir.normalized * speed;
+        if (distanceFromPos > distanceBetweenTiles * 2)
+            SetTiles();
+
+        enemy.rb.linearVelocity = movementDirection.normalized * speed;
 
         Vector3 enemyPos = new Vector3(enemy.transform.position.x, 0, enemy.transform.position.z);
         Vector3 nextTilePos = new Vector3(nextTile.transform.position.x, 0, nextTile.transform.position.z);
@@ -77,6 +85,8 @@ public class ESM_MovingState : ESM_EnemyBaseState
         int nextTileId = path.IndexOf(currentTile) + 1;
 
         nextTile = path[nextTileId];
+
+        movementDirection = nextTile.transform.position - currentTile.transform.position;
     }
 
     private bool IsAtTileCenter(Vector3 position, Vector3 nextTilePosition)

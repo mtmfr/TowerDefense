@@ -11,7 +11,7 @@ public abstract class BaseTurrets : MonoBehaviour
 
     protected int attackPower;
     protected float attackRange;
-    protected float TimeBetweenAttack;
+    protected float timeBetweenAttack;
     protected float attackTimer = 0;
 
     private List<Enemy> enemiesInRange = new();
@@ -20,7 +20,7 @@ public abstract class BaseTurrets : MonoBehaviour
     {
         attackPower = turretsStats.attack;
         attackRange = turretsStats.range;
-        TimeBetweenAttack = turretsStats.attackCooldown;
+        timeBetweenAttack = turretsStats.attackCooldown;
 
         col = GetComponent<SphereCollider>();
         col.radius = attackRange;
@@ -44,6 +44,9 @@ public abstract class BaseTurrets : MonoBehaviour
             if (enemiesInRange.Contains(enemy))
                 enemiesInRange.Remove(enemy);
         }
+
+        if (enemiesInRange.Count == 0)
+            attackTimer = timeBetweenAttack;
     }
 
     protected abstract void Attack();
