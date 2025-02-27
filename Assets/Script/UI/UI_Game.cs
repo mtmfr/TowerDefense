@@ -7,12 +7,13 @@ using UnityEngine.UI;
 public class UI_Game : MonoBehaviour
 {
     [SerializeField] private Button pauseButton;
-    [SerializeField] private TextMeshProUGUI goldAmount;
+    [SerializeField] private TextMeshProUGUI goldText;
     [SerializeField] private Slider health;
 
     private void OnEnable()
     {
         GameManager.OnGameStateChange += ShowUI;
+        GameManager.OnGoldValueChanged += UpdateGoldText;
 
         GameUIEvent.OnSetHealth += SetHealth;
         GameUIEvent.OnUpdateHealth += UpdateHealth;
@@ -21,6 +22,7 @@ public class UI_Game : MonoBehaviour
     private void OnDisable()
     {
         GameManager.OnGameStateChange -= ShowUI;
+        GameManager.OnGoldValueChanged -= UpdateGoldText;
 
         GameUIEvent.OnSetHealth -= SetHealth;
         GameUIEvent.OnUpdateHealth -= UpdateHealth;
@@ -37,6 +39,11 @@ public class UI_Game : MonoBehaviour
         health.value = newHealth;
     }
 
+    private void UpdateGoldText(int newGold)
+    {
+        goldText.text = newGold.ToString();
+    }
+
     private void ShowUI(GameState gameState)
     {
         bool isVisible = gameState switch
@@ -45,7 +52,7 @@ public class UI_Game : MonoBehaviour
             _ => false
         };
 
-        goldAmount.gameObject.SetActive(isVisible);
+        goldText.gameObject.SetActive(isVisible);
         health.gameObject.SetActive(isVisible);
     }
 }

@@ -3097,7 +3097,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseButton: {fileID: 931754131}
-  goldAmount: {fileID: 2066337928}
+  goldText: {fileID: 2066337928}
   health: {fileID: 171450895}
 --- !u!1 &2032239282
 GameObject:
