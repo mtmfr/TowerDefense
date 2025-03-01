@@ -52,7 +52,6 @@ public class UI_Game : MonoBehaviour
             _ => false
         };
 
-        goldText.gameObject.SetActive(isVisible);
         health.gameObject.SetActive(isVisible);
     }
 }

@@ -1,11 +1,10 @@
-using System.Collections;
 using UnityEngine;
 
-public class NormalTurret : BaseTurrets
+public class Turret_Normal : BaseTurrets
 {
     protected override void Attack()
     {
-        Enemy enemyToTarget = GetClosestEnemy();
+        enemyToTarget = GetClosestEnemy();
 
         if (enemyToTarget == null)
             return;

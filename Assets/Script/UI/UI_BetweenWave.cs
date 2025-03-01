@@ -8,6 +8,7 @@ public class UI_BetweenWave : MonoBehaviour
 {
     [SerializeField] private Button startNextWave;
     [SerializeField] private Button openTurretSelection;
+    [SerializeField] private Button closeTurretSelection;
 
     [SerializeField] private GameObject SelectionButtons;
     [SerializeField] private GameObject TurretSelection;
@@ -28,12 +29,14 @@ public class UI_BetweenWave : MonoBehaviour
     {
         startNextWave.onClick.AddListener(StartNextWave);
         openTurretSelection.onClick.AddListener(OpenTurretSelection);
+        closeTurretSelection.onClick.AddListener(CloseTurretSelection);
     }
 
     private void OnDisable()
     {
         startNextWave.onClick.RemoveListener(StartNextWave);
         openTurretSelection.onClick.RemoveListener(OpenTurretSelection);
+        closeTurretSelection.onClick.RemoveListener(CloseTurretSelection);
     }
 
     private void StartNextWave()
@@ -46,6 +49,13 @@ public class UI_BetweenWave : MonoBehaviour
         SelectionButtons.SetActive(false);
         TurretSelection.SetActive(true);
         BetweenWaveEvent.TurretSelectionFinished(false);
+    }
+
+    public void CloseTurretSelection()
+    {
+        SelectionButtons.SetActive(true);
+        TurretSelection.SetActive(false);
+        BetweenWaveEvent.TurretSelectionFinished(true);
     }
 
     public void SelectedTurret(BaseTurrets selectedTurret)

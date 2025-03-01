@@ -10,9 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 736b3f6bf9f243146850d0c87f96ba2f, type: 3}
-  m_Name: Normal_Lvl1
+  m_Name: RapidFire_Lvl3
   m_EditorClassIdentifier: 
-  <attack>k__BackingField: 2
-  <cost>k__BackingField: 10
-  <range>k__BackingField: 4
-  <attackCooldown>k__BackingField: 0.7
+  <attack>k__BackingField: 12
+  <cost>k__BackingField: 375
+  <range>k__BackingField: 6
+  <attackCooldown>k__BackingField: 1.6
+  <bulletsCooldown>k__BackingField: 0.1
+  <bulletsToFire>k__BackingField: 4

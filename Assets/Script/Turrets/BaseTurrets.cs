@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,12 +11,22 @@ public abstract class BaseTurrets : MonoBehaviour
     [SerializeField] protected GameObject turretBarrel;
     protected SphereCollider col;
 
+    #region  turrets stats
     protected int attackPower;
     protected float attackRange;
+
     protected float timeBetweenAttack;
     protected float attackTimer = 0;
 
+    protected float timeBetweenBullets;
+    protected float bulletTimer = 0;
+
+    protected int numberOfBullet;
+    protected int bulletShot = 0;
+    #endregion
+
     private List<Enemy> enemiesInRange = new();
+    protected Enemy enemyToTarget;
 
     private void Start()
     {
@@ -26,6 +35,8 @@ public abstract class BaseTurrets : MonoBehaviour
         attackPower = turretsStats[id].attack;
         attackRange = turretsStats[id].range;
         timeBetweenAttack = turretsStats[id].attackCooldown;
+        timeBetweenBullets = turretsStats[id].bulletsCooldown;
+        numberOfBullet = turretsStats[id].bulletsToFire;
 
         col = GetComponent<SphereCollider>();
         col.radius = attackRange;
@@ -56,8 +67,7 @@ public abstract class BaseTurrets : MonoBehaviour
     {
         if (other.TryGetComponent(out Enemy enemy))
         {
-            if (enemiesInRange.Contains(enemy))
-                enemiesInRange.Remove(enemy);
+            enemiesInRange.Remove(enemy);
         }
 
         if (enemiesInRange.Count == 0)
@@ -79,24 +89,31 @@ public abstract class BaseTurrets : MonoBehaviour
 
     private void LevelUp(BaseTurrets upgradedTurret)
     {
+        //Check if the turret should gain one level
         if (upgradedTurret != this)
             return;
 
         if (level >= maxLevel)
             return;
 
+        if (maxLevel + 1 > maxLevel)
+            return;
+
+        level++;
+
         //Check for gold
         if (GameManager.gold - turretsStats[level].cost < 0)
             return;
 
         Debug.Log("level up");
-
-        level++;
+        GameManager.UseGold(turretsStats[level].cost);
 
         int id = level - 1;
 
         attackPower = turretsStats[id].attack;
         attackRange = turretsStats[id].range;
         timeBetweenAttack = turretsStats[id].attackCooldown;
+        timeBetweenBullets = turretsStats[id].bulletsCooldown;
+        numberOfBullet = turretsStats[id].bulletsToFire;
     }
 }

@@ -100,11 +100,18 @@ public class TileSelecter : MonoBehaviour
         float turretHeight = selectedTurret.GetComponent<MeshRenderer>().bounds.extents.y;
 
         Vector3 position = tile.transform.position;
-        position.y = turretHeight;
+        position.y = 1.35f;
 
         BaseTurrets turretToPlace = ObjectPool.GetObject(selectedTurret, position, Quaternion.identity);
+        int turretCost = turretToPlace.turretsStats[0].cost;
 
-        GameManager.UseGold(turretToPlace.turretsStats[0].cost);
+        if (GameManager.gold - turretCost < 0)
+        {
+            ObjectPool.SetObjectInactive(turretToPlace);
+            return;
+        }
+
+        GameManager.UseGold(turretCost);
 
         tile.isTurretPoint = true;
         tile.SetTileTurret(turretToPlace);
