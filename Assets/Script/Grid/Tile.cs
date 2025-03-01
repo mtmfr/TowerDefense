@@ -8,6 +8,8 @@ public class Tile : MonoBehaviour
     public bool isRoad = false;
     public bool isTurretPoint = false;
 
+    public BaseTurrets turretOnTile { get; private set; }
+
     public int xId { get; private set; }
     public int yId { get; private set; }
 
@@ -32,5 +34,10 @@ public class Tile : MonoBehaviour
     public void SetRendererMaterial(Material newMaterial)
     {
         meshRenderer.material = newMaterial;
+    }
+
+    public void SetTileTurret(BaseTurrets turret)
+    {
+        turretOnTile = turret;
     }
 }

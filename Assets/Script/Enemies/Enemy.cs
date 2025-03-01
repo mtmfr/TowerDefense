@@ -109,6 +109,7 @@ public abstract class Enemy : MonoBehaviour
             renderer.material = baseMaterial;
         }
 
+        currentState = null;
         GameManager.AddGold(enemySo.goldDropped);
         ObjectPool.SetObjectInactive(this);
         EnemyEvent.Died(this);

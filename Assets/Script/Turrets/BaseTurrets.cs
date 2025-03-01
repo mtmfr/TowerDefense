@@ -5,7 +5,10 @@ using UnityEngine;
 
 public abstract class BaseTurrets : MonoBehaviour
 {
-    [SerializeField] protected SO_Turrets turretsStats;
+    [field: SerializeField] public List<SO_Turrets> turretsStats { get; protected set; }
+    private int level = 1;
+    private int maxLevel;
+
     [SerializeField] protected GameObject turretBarrel;
     protected SphereCollider col;
 
@@ -18,12 +21,24 @@ public abstract class BaseTurrets : MonoBehaviour
 
     private void Start()
     {
-        attackPower = turretsStats.attack;
-        attackRange = turretsStats.range;
-        timeBetweenAttack = turretsStats.attackCooldown;
+        maxLevel = turretsStats.Count;
+        int id = level - 1;
+        attackPower = turretsStats[id].attack;
+        attackRange = turretsStats[id].range;
+        timeBetweenAttack = turretsStats[id].attackCooldown;
 
         col = GetComponent<SphereCollider>();
         col.radius = attackRange;
+    }
+
+    private void OnEnable()
+    {
+        SelectorEvent.OnLevelUp += LevelUp;
+    }
+
+    private void OnDisable()
+    {
+        SelectorEvent.OnLevelUp -= LevelUp;
     }
 
     private void Update()
@@ -60,5 +75,28 @@ public abstract class BaseTurrets : MonoBehaviour
             .FirstOrDefault();
 
         return closestEnemy;
+    }
+
+    private void LevelUp(BaseTurrets upgradedTurret)
+    {
+        if (upgradedTurret != this)
+            return;
+
+        if (level >= maxLevel)
+            return;
+
+        //Check for gold
+        if (GameManager.gold - turretsStats[level].cost < 0)
+            return;
+
+        Debug.Log("level up");
+
+        level++;
+
+        int id = level - 1;
+
+        attackPower = turretsStats[id].attack;
+        attackRange = turretsStats[id].range;
+        timeBetweenAttack = turretsStats[id].attackCooldown;
     }
 }

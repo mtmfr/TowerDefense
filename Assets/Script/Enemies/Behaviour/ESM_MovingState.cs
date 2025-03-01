@@ -7,7 +7,6 @@ public class ESM_MovingState : ESM_EnemyBaseState
 {
     private float speed;
     private List<Tile> path;
-    private List<Tile> parcouredTiles = new();
 
     private Vector3 movementDirection;
 
@@ -36,6 +35,15 @@ public class ESM_MovingState : ESM_EnemyBaseState
 
         if (currentTile != destination)
             MoveToNextTile();
+    }
+
+    public override void OnExitState()
+    {
+        base.OnExitState();
+        currentTile = null;
+        nextTile = null;
+        path = null;
+
     }
 
     public override void OnCollisionEnter(Collision collision)

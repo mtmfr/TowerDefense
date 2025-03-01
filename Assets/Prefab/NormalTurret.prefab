@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 1444853347613892684}
   - component: {fileID: 4523404978920616485}
   m_Layer: 0
-  m_Name: SM_Prop_Turret_Base_Double_01
+  m_Name: NormalTurret
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -233,7 +233,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c824c99333c7974faa988daa57735dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turretsStats: {fileID: 11400000, guid: 3c001471ef8d58146916660a092b86e5, type: 2}
+  <turretsStats>k__BackingField:
+  - {fileID: 11400000, guid: aa31c46646383914ea9c4722e513e8c0, type: 2}
+  - {fileID: 11400000, guid: 25ceb63b3864392469c1032fd2c9d3a0, type: 2}
+  - {fileID: 11400000, guid: bc994bc5cbe956544930865c8505ae87, type: 2}
   turretBarrel: {fileID: 4758137929909880881}
 --- !u!135 &4523404978920616485
 SphereCollider:

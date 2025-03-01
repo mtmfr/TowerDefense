@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -118,8 +119,6 @@ public class GridManager : MonoBehaviour
     }
     #endregion
 
-    #region Path finding
-
     #region next tile
     /// <summary>
     /// Get the available tiles adjacent of the current one
@@ -131,6 +130,7 @@ public class GridManager : MonoBehaviour
         //Get the adjacent tiles of the current tile excluding those that aren't available
         List<Tile> adjacentTiles = tiles.FindAll(tile =>
         {
+            //check if the tile yId is above or below the current tile by 1 on an axis and if the other id the same for the other axis
             bool isAdjacentOnY = (tile.yId == currentTile.yId + 1 || tile.yId == currentTile.yId - 1) && tile.xId == currentTile.xId;
 
             bool isAbjacentOnX = (tile.xId == currentTile.xId + 1 || tile.xId == currentTile.xId - 1) && tile.yId == currentTile.yId;
@@ -219,6 +219,7 @@ public class GridManager : MonoBehaviour
     }
     #endregion
 
+    #region path finder
     /// <summary>
     /// Create the path the enemy will go through
     /// </summary>
@@ -229,7 +230,6 @@ public class GridManager : MonoBehaviour
         StartCoroutine(PathGenerationVisual());
     }
 
-    public event Action OnPathGenerated;
     private IEnumerator PathGenerationVisual()
     {
         Tile currentTile = startTile;
@@ -270,7 +270,46 @@ public class GridManager : MonoBehaviour
         }
 
         GameManager.UpdateGameState(GameState.Shop);
-        OnPathGenerated?.Invoke();
     }
-        #endregion
+    #endregion
+
+    /// <summary>
+    /// Get the tiles close to the selected tile and check if there is any that are road
+    /// </summary>
+    /// <param name="tileClicked">the tile that was click on</param>
+    /// <returns>true if the tile is near a road</returns>
+    public bool CanTileHoldTurret(Tile tileClicked)
+    {
+        List<Tile> turretAdjacentTiles = GetAllAdjacentTiles(tileClicked);
+
+        bool? isAdjacentToRoad = null;
+
+        foreach(Tile tile in turretAdjacentTiles)
+        {
+            if (tile.isRoad)
+                isAdjacentToRoad = true;
+        }
+
+        return isAdjacentToRoad.HasValue ? isAdjacentToRoad.Value : false;
+    }
+
+    /// <summary>
+    /// Get the adjacent tiles
+    /// </summary>
+    /// <param name="tileToCheck">the tile to get the adjacent ones</param>
+    /// <returns>a list of the adjacent tiles</returns>
+    private List<Tile> GetAllAdjacentTiles(Tile tileToCheck)
+    {
+        List<Tile> allAdjacentTiles = path.FindAll(tile =>
+        {
+            //check if the tile Id is above or below the current tile by 1 on an axis and if the other id the same for the other axis
+            bool isAdjacentOnY = (tile.yId == tileToCheck.yId + 1 || tile.yId == tileToCheck.yId - 1) && tile.xId == tileToCheck.xId;
+
+            bool isAdjacentOnX = (tile.xId == tileToCheck.xId + 1 || tile.xId == tileToCheck.xId - 1) && tile.yId == tileToCheck.yId;
+
+            return isAdjacentOnX || isAdjacentOnY;
+        });
+
+        return allAdjacentTiles;
+    }
 }

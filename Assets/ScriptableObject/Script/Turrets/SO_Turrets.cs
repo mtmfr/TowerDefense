@@ -5,6 +5,7 @@ using UnityEngine;
 public class SO_Turrets : ScriptableObject
 {
     [field: SerializeField] public int attack { get; private set; }
+    [field: SerializeField] public int cost { get; private set; }
     [field: SerializeField] public float range { get; private set; }
     [field: SerializeField] public float attackCooldown { get; private set; }
 }

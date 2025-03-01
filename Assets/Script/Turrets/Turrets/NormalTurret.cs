@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class TestTurret : BaseTurrets
+public class NormalTurret : BaseTurrets
 {
     protected override void Attack()
     {
