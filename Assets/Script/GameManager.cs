@@ -11,7 +11,7 @@ public static class GameManager
         switch (nextGameState)
         {
             case GameState.Menu:
-                gold = 15;
+                gold = 10;
                 break;
         }
         OnGameStateChange?.Invoke(nextGameState);

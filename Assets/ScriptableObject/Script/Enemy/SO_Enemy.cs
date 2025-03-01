@@ -12,4 +12,7 @@ public class SO_Enemy : ScriptableObject
     [field: SerializeField] public float attackDelay { get; protected set; }
     [Tooltip("How much credit the wave use to have this enemy")]
     [field: SerializeField] public int waveCost { get; protected set; }
+
+    [field: SerializeField] public AnimationClip walkAnim { get; private set; }
+    [field: SerializeField] public AnimationClip attackAnim { get; private set; }
 }

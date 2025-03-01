@@ -7,11 +7,14 @@ public class ESM_AttackingState : ESM_EnemyBaseState
     private GameObject attackTarget;
 
     private float attackTimer = 0;
-    public ESM_AttackingState(Enemy enemy, int attackPower, float timeBetweenAttack, GameObject attackTarget = null)
+
+    private string animName;
+    public ESM_AttackingState(Enemy enemy, int attackPower, float timeBetweenAttack, string animName, GameObject attackTarget = null)
     {
         this.enemy = enemy;
         this.attackPower = attackPower;
         this.timeBetweenAttack = timeBetweenAttack;
+        this.animName = animName;
         this.attackTarget = attackTarget;
     }
 
@@ -41,13 +44,14 @@ public class ESM_AttackingState : ESM_EnemyBaseState
         base.OnCollisionExit(collision);
 
         if (!collision.gameObject.TryGetComponent<Tile>(out _))
-            enemy.ChangeState(new ESM_MovingState(enemy, enemy.movementSpeed, GridManager.instance.path));
+            enemy.ChangeState(new ESM_MovingState(enemy, enemy.movementSpeed, GridManager.instance.path, enemy.walkAnimName));
     }
 
     private void Attack()
     {
         if (attackTimer >= timeBetweenAttack)
         {
+            enemy.animator.Play(animName);
             HealthEvent.InflictDamage(attackTarget.GetInstanceID(), attackPower);
             attackTimer = 0;
         }

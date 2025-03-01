@@ -7,6 +7,7 @@ public class ESM_MovingState : ESM_EnemyBaseState
 {
     private float speed;
     private List<Tile> path;
+    private string animName;
 
     private Vector3 movementDirection;
 
@@ -15,11 +16,12 @@ public class ESM_MovingState : ESM_EnemyBaseState
 
     private Tile destination;
 
-    public ESM_MovingState(Enemy enemy, float speed, List<Tile> path)
+    public ESM_MovingState(Enemy enemy, float speed, List<Tile> path, string animName)
     {
         this.speed = speed;
         this.path = path;
         this.enemy = enemy;
+        this.animName = animName;
     }
 
     public override void OnEnterState()
@@ -27,6 +29,7 @@ public class ESM_MovingState : ESM_EnemyBaseState
         base.OnEnterState();
 
         SetTiles();
+        enemy.animator.Play(animName);
     }
 
     public override void OnFixedUpdate()
@@ -51,7 +54,7 @@ public class ESM_MovingState : ESM_EnemyBaseState
         base.OnCollisionEnter(collision);
 
         if (!collision.gameObject.TryGetComponent<Tile>(out _))
-            enemy.ChangeState(new ESM_AttackingState(enemy, enemy.attackPower, enemy.delayBetweenAttack, collision.gameObject));
+            enemy.ChangeState(new ESM_AttackingState(enemy, enemy.attackPower, enemy.delayBetweenAttack, enemy.attackAnimName, collision.gameObject));
     }
 
     private void SetTiles()

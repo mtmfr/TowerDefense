@@ -2956,8 +2956,7 @@ MonoBehaviour:
   delayBetweenEnemies: 0.7
   enemyTarget: {fileID: 1747262174}
   spawnableEnemies:
-  - {fileID: 4027932426922736116, guid: df09502d495954943bac0771fe5b4b80, type: 3}
-  enemy: {fileID: 4027932426922736116, guid: df09502d495954943bac0771fe5b4b80, type: 3}
+  - {fileID: 3082951515724301715, guid: 589c137fea0f6f24db26924bdb140286, type: 3}
 --- !u!4 &1608439775
 Transform:
   m_ObjectHideFlags: 0

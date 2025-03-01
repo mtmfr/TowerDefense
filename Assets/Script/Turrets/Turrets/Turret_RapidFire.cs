@@ -8,15 +8,16 @@ public class Turret_RapidFire : BaseTurrets
     {
         if (canAttack == true)
         {
+            Vector3 enemyPosition = enemyToTarget.transform.position;
+            enemyPosition.y = turretBarrel.transform.position.y;
+            turretBarrel.transform.LookAt(enemyPosition);
+
             if (bulletShot < numberOfBullet)
             {
 
                 if (bulletTimer >= timeBetweenBullets)
                 {
-                    Vector3 enemyPosition = enemyToTarget.transform.position;
-                    enemyPosition.y = turretBarrel.transform.position.y;
-                    turretBarrel.transform.LookAt(enemyPosition);
-
+                    shotExplosion.Emit(1);
                     HealthEvent.InflictDamage(enemyToTarget.gameObject.GetInstanceID(), attackPower);
                     bulletTimer = 0;
 

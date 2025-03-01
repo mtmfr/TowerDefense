@@ -10,6 +10,10 @@ public abstract class Enemy : MonoBehaviour
     private ESM_EnemyBaseState currentState;
 
     public Rigidbody rb { get; private set; }
+    public Animator animator { get; private set; }
+    public string walkAnimName { get; private set; }
+    public string attackAnimName { get; private set; }
+
     private List<MeshRenderer> renderers = new();
 
     [SerializeField] private Material baseMaterial;
@@ -27,6 +31,7 @@ public abstract class Enemy : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     private void Start()
@@ -41,7 +46,10 @@ public abstract class Enemy : MonoBehaviour
         attackPower = enemySo.attack;
         delayBetweenAttack = enemySo.attackDelay;
 
-        currentState = new ESM_MovingState(this, movementSpeed, GridManager.instance.path);
+        walkAnimName = enemySo.walkAnim.name;
+        attackAnimName = enemySo.attackAnim.name;
+
+        currentState = new ESM_MovingState(this, movementSpeed, GridManager.instance.path, walkAnimName);
         currentState.OnEnterState();
 
         HealthEvent.OnDamageReceived += ReceiveDamage;

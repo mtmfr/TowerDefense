@@ -12,7 +12,6 @@ public class EnemySpawner : MonoBehaviour
     [Space]
     [SerializeField] private List<Enemy> spawnableEnemies;
     private List<Enemy> enemiesToSpawn = new();
-    [SerializeField] private Enemy enemy;
 
     private List<Enemy> enemiesInWave = new();
 
@@ -127,14 +126,6 @@ public class EnemySpawner : MonoBehaviour
         spawnTile = tile;
         transform.position = spawnTile.transform.position;
     }
-
-    private Vector3 SetEnemySpawnPosition()
-    {
-        float enemyHalfHeight = enemy.GetComponent<MeshRenderer>().bounds.extents.y;
-        Vector3 spawnPosition = new Vector3(transform.position.x, 0.6f, transform.position.z);
-
-        return spawnPosition;
-    }
     #endregion
 
     #region SpawnEnemies
@@ -146,12 +137,12 @@ public class EnemySpawner : MonoBehaviour
 
         if (timeSinceLastEnemy >= delayBetweenEnemies)
         {
-            Vector3 spawnPosition = SetEnemySpawnPosition();
-
             if (enemiesToSpawn.Count == 0)
                 return;
 
             Enemy enemy = enemiesToSpawn[0];
+            Vector3 spawnPosition = transform.position;
+            spawnPosition.y = 0.6f;
 
             Enemy enemyToSpawn = ObjectPool.GetObject(enemy, spawnPosition, Quaternion.identity);
 

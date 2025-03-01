@@ -15,6 +15,7 @@ public class Turret_Normal : BaseTurrets
 
         if (attackTimer > timeBetweenAttack)
         {
+            shotExplosion.Emit(1);
             HealthEvent.InflictDamage(enemyToTarget.gameObject.GetInstanceID(), attackPower);
             attackTimer = 0;
         }            

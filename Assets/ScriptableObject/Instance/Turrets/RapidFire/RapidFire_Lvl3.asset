@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <attack>k__BackingField: 12
   <cost>k__BackingField: 375
-  <range>k__BackingField: 6
+  <range>k__BackingField: 7
   <attackCooldown>k__BackingField: 1.6
   <bulletsCooldown>k__BackingField: 0.1
   <bulletsToFire>k__BackingField: 4

@@ -11,6 +11,8 @@ public abstract class BaseTurrets : MonoBehaviour
     [SerializeField] protected GameObject turretBarrel;
     protected SphereCollider col;
 
+    [SerializeField] protected ParticleSystem shotExplosion;
+
     #region  turrets stats
     protected int attackPower;
     protected float attackRange;
@@ -68,6 +70,8 @@ public abstract class BaseTurrets : MonoBehaviour
         if (other.TryGetComponent(out Enemy enemy))
         {
             enemiesInRange.Remove(enemy);
+            if (enemyToTarget == enemy)
+                enemyToTarget = null;
         }
 
         if (enemiesInRange.Count == 0)
