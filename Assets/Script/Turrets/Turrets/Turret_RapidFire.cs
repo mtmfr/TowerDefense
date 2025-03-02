@@ -4,6 +4,8 @@ using UnityEngine;
 public class Turret_RapidFire : BaseTurrets
 {
     bool canAttack = false;
+    int muzzleEndId;
+
     protected override void Attack()
     {
         if (canAttack == true)
@@ -14,10 +16,12 @@ public class Turret_RapidFire : BaseTurrets
 
             if (bulletShot < numberOfBullet)
             {
-
                 if (bulletTimer >= timeBetweenBullets)
                 {
-                    shotExplosion.Emit(1);
+                    muzzleEndId = bulletShot % 2;
+
+                    MuzzleFlash flash = ObjectPool.GetObject(shotEffect, muzzleEnd[muzzleEndId].position, muzzleEnd[muzzleEndId].rotation);
+                    flash.StartEffect();
                     HealthEvent.InflictDamage(enemyToTarget.gameObject.GetInstanceID(), attackPower);
                     bulletTimer = 0;
 
@@ -34,7 +38,16 @@ public class Turret_RapidFire : BaseTurrets
                 enemyToTarget = GetClosestEnemy();
 
                 if (enemyToTarget == null)
+                {
+                    attackTimer += Time.deltaTime;
                     return;
+                }                    
+
+                if (enemyToTarget.gameObject.activeInHierarchy == false)
+                {
+                    enemyToTarget = null;
+                    return;
+                }
 
                 bulletShot = 0;
                 canAttack = true;

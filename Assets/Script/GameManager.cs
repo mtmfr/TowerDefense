@@ -12,6 +12,10 @@ public static class GameManager
         {
             case GameState.Menu:
                 gold = 10;
+                GC.Collect();
+                break;
+            case GameState.Shop:
+                GC.Collect();
                 break;
         }
         OnGameStateChange?.Invoke(nextGameState);

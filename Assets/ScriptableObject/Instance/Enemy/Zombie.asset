@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Zombie
   m_EditorClassIdentifier: 
   <health>k__BackingField: 8
-  <speed>k__BackingField: 6
+  <speed>k__BackingField: 4
   <attack>k__BackingField: 2
   <goldDropped>k__BackingField: 5
+  <damagedEffect>k__BackingField: {fileID: 333440393317966, guid: 02b3609e13b06df4d9f54bbbb43459c7, type: 3}
   <attackDelay>k__BackingField: 2
   <waveCost>k__BackingField: 1
   <walkAnim>k__BackingField: {fileID: 7400000, guid: 37e6af8636979e04086967e3bd667606, type: 2}

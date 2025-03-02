@@ -9,9 +9,10 @@ public abstract class BaseTurrets : MonoBehaviour
     private int maxLevel;
 
     [SerializeField] protected GameObject turretBarrel;
+    [SerializeField] protected List<Transform> muzzleEnd;
     protected SphereCollider col;
 
-    [SerializeField] protected ParticleSystem shotExplosion;
+    protected MuzzleFlash shotEffect;
 
     #region  turrets stats
     protected int attackPower;
@@ -39,6 +40,7 @@ public abstract class BaseTurrets : MonoBehaviour
         timeBetweenAttack = turretsStats[id].attackCooldown;
         timeBetweenBullets = turretsStats[id].bulletsCooldown;
         numberOfBullet = turretsStats[id].bulletsToFire;
+        shotEffect = turretsStats[id].firedEffect;
 
         col = GetComponent<SphereCollider>();
         col.radius = attackRange;
@@ -46,11 +48,13 @@ public abstract class BaseTurrets : MonoBehaviour
 
     private void OnEnable()
     {
+        GameManager.OnGameStateChange += ClearEnemiesInRange;
         SelectorEvent.OnLevelUp += LevelUp;
     }
 
     private void OnDisable()
     {
+        GameManager.OnGameStateChange -= ClearEnemiesInRange;
         SelectorEvent.OnLevelUp -= LevelUp;
     }
 
@@ -71,7 +75,7 @@ public abstract class BaseTurrets : MonoBehaviour
         {
             enemiesInRange.Remove(enemy);
             if (enemyToTarget == enemy)
-                enemyToTarget = null;
+                enemyToTarget = GetClosestEnemy();
         }
 
         if (enemiesInRange.Count == 0)
@@ -79,6 +83,14 @@ public abstract class BaseTurrets : MonoBehaviour
     }
 
     protected abstract void Attack();
+
+    private void ClearEnemiesInRange(GameState gameState)
+    {
+        if (gameState != GameState.Shop)
+            return;
+
+        enemiesInRange.Clear();
+    }
 
     protected Enemy GetClosestEnemy()
     {

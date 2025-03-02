@@ -42,11 +42,12 @@ public static class ObjectPool
     {
         T toActivate = null;
         Type type = objectToActivate.GetType();
-        foreach(T inactive in inactiveObjectValues)
+
+        foreach (MonoBehaviour inactive in inactiveObjectValues)
         {
             if (inactive.GetType() == type)
             {
-                toActivate = inactive;
+                toActivate = (T)inactive;
                 break;
             }
         }

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 public class ESM_MovingState : ESM_EnemyBaseState
@@ -24,6 +23,11 @@ public class ESM_MovingState : ESM_EnemyBaseState
         this.animName = animName;
     }
 
+    ~ESM_MovingState()
+    {
+        Debug.Log("destroyed");
+    }
+
     public override void OnEnterState()
     {
         base.OnEnterState();
@@ -43,10 +47,10 @@ public class ESM_MovingState : ESM_EnemyBaseState
     public override void OnExitState()
     {
         base.OnExitState();
+
         currentTile = null;
         nextTile = null;
         path = null;
-
     }
 
     public override void OnCollisionEnter(Collision collision)
@@ -61,9 +65,13 @@ public class ESM_MovingState : ESM_EnemyBaseState
     {
         List<Tile> pathCopy = new(path);
         currentTile = pathCopy.OrderBy(tile => Vector3.Distance(tile.transform.position, enemy.transform.position)).FirstOrDefault();
+        enemy.currentTile = currentTile;
         destination = path[path.Count - 1];
 
         int nextTileId = path.IndexOf(currentTile) + 1;
+
+        if (nextTileId > path.Count)
+            return;
 
         nextTile = path[nextTileId];
         movementDirection = nextTile.transform.position - currentTile.transform.position;
@@ -77,6 +85,8 @@ public class ESM_MovingState : ESM_EnemyBaseState
         if (distanceFromPos > distanceBetweenTiles * 2)
             SetTiles();
 
+        enemy.rb.rotation = Quaternion.LookRotation(movementDirection);
+
         enemy.rb.linearVelocity = movementDirection.normalized * speed;
 
         Vector3 enemyPos = new Vector3(enemy.transform.position.x, 0, enemy.transform.position.z);
@@ -89,6 +99,7 @@ public class ESM_MovingState : ESM_EnemyBaseState
     private void UpdateNextTile()
     {
         currentTile = nextTile;
+        enemy.currentTile = currentTile;
 
         if (currentTile == destination)
             return;

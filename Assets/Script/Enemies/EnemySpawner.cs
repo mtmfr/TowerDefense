@@ -71,7 +71,7 @@ public class EnemySpawner : MonoBehaviour
     private int WaveCredit()
     {
         currentWave++;
-        int waveCredit = (int)(currentWave * Mathf.Pow(2, Mathf.Log(2)));
+        int waveCredit = (int)(currentWave * Mathf.Pow(1.5f, Mathf.Log(2)));
         return waveCredit;
     }
 

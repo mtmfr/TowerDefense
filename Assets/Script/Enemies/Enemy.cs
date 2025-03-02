@@ -15,6 +15,7 @@ public abstract class Enemy : MonoBehaviour
     public string attackAnimName { get; private set; }
 
     private List<MeshRenderer> renderers = new();
+    private EnemyHitEffect blood;
 
     [SerializeField] private Material baseMaterial;
     [SerializeField] private Material damagedColor;
@@ -45,6 +46,7 @@ public abstract class Enemy : MonoBehaviour
         movementSpeed = enemySo.speed;
         attackPower = enemySo.attack;
         delayBetweenAttack = enemySo.attackDelay;
+        blood = enemySo.damagedEffect;
 
         walkAnimName = enemySo.walkAnim.name;
         attackAnimName = enemySo.attackAnim.name;
@@ -107,6 +109,8 @@ public abstract class Enemy : MonoBehaviour
             return;
         }
 
+        var bloodEffect = ObjectPool.GetObject(blood, transform.position, transform.rotation);
+        bloodEffect.StartEffect();
         StartCoroutine(TakeDamageColorChange());
     }
 
@@ -119,9 +123,8 @@ public abstract class Enemy : MonoBehaviour
 
         currentState = null;
         GameManager.AddGold(enemySo.goldDropped);
-        ObjectPool.SetObjectInactive(this);
         EnemyEvent.Died(this);
-        gameObject.SetActive(false);
+        ObjectPool.SetObjectInactive(this);
     }
 
     private IEnumerator TakeDamageColorChange()

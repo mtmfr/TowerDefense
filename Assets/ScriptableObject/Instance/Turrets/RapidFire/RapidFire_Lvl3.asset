@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <attack>k__BackingField: 12
   <cost>k__BackingField: 375
-  <range>k__BackingField: 7
+  <range>k__BackingField: 9
   <attackCooldown>k__BackingField: 1.6
+  <firedEffect>k__BackingField: {fileID: 6759547397204856248, guid: aa0c7ff17eae5e34aad08072b8a3b025, type: 3}
   <bulletsCooldown>k__BackingField: 0.1
   <bulletsToFire>k__BackingField: 4
