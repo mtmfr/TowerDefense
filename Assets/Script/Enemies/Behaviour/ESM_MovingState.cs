@@ -23,11 +23,6 @@ public class ESM_MovingState : ESM_EnemyBaseState
         this.animName = animName;
     }
 
-    ~ESM_MovingState()
-    {
-        Debug.Log("destroyed");
-    }
-
     public override void OnEnterState()
     {
         base.OnEnterState();

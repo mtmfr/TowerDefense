@@ -7,7 +7,7 @@ public class EnemyHitEffect : MonoBehaviour
 
     public void StartEffect()
     {
-        Effect();
+        StartCoroutine(Effect());
     }
 
     private IEnumerator Effect()

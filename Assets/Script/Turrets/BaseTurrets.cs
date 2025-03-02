@@ -112,19 +112,20 @@ public abstract class BaseTurrets : MonoBehaviour
         if (level >= maxLevel)
             return;
 
-        if (maxLevel + 1 > maxLevel)
+        if (level + 1 > maxLevel)
             return;
 
         level++;
 
+        int id = level - 1;
+
         //Check for gold
-        if (GameManager.gold - turretsStats[level].cost < 0)
+        if (GameManager.gold - turretsStats[id].cost < 0)
             return;
 
         Debug.Log("level up");
         GameManager.UseGold(turretsStats[level].cost);
 
-        int id = level - 1;
 
         attackPower = turretsStats[id].attack;
         attackRange = turretsStats[id].range;
