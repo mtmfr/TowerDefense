@@ -14,9 +14,6 @@ public static class GameManager
                 gold = 10;
                 GC.Collect();
                 break;
-            case GameState.Shop:
-                GC.Collect();
-                break;
         }
         OnGameStateChange?.Invoke(nextGameState);
     }

@@ -2,36 +2,20 @@ using UnityEngine;
 
 public class Turret_Normal : BaseTurrets
 {
+    MuzzleFlash flash;
     protected override void Attack()
     {
         enemyToTarget = GetClosestEnemy();
 
-        if (enemyToTarget == null)
-        {
-            attackTimer += Time.deltaTime;
+        if (!CanAttackEnemy(enemyToTarget))
             return;
-        }
 
-        if (enemyToTarget.gameObject.activeInHierarchy == false)
-        {
-            enemyToTarget = GetClosestEnemy();
-            attackTimer += Time.deltaTime;
-            return;
-        }
+        LookAtEnemy(enemyToTarget);
 
-        Vector3 enemyPosition = enemyToTarget.transform.position;
-        enemyPosition.y = turretBarrel.transform.position.y;
-        turretBarrel.transform.LookAt(enemyPosition);
+        flash = ObjectPool.GetObject(shotEffect, muzzleEnd[0].position, muzzleEnd[0].rotation);
+        flash.StartEffect();
 
-        if (attackTimer > timeBetweenAttack)
-        {
-            MuzzleFlash flash = ObjectPool.GetObject(shotEffect, muzzleEnd[0].position, muzzleEnd[0].rotation);
-            flash.StartEffect();
-
-            HealthEvent.InflictDamage(enemyToTarget.gameObject.GetInstanceID(), attackPower);
-            attackTimer = 0;
-        }            
-        else
-            attackTimer += Time.deltaTime;
+        HealthEvent.InflictDamage(enemyToTarget.GetInstanceID(), attackPower);
+        attackTimer = 0;
     }
 }

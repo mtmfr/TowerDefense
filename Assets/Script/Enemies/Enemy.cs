@@ -98,7 +98,7 @@ public abstract class Enemy : MonoBehaviour
     #region Damage receive
     private void ReceiveDamage(int id, int damageReceived)
     {
-        if (gameObject.GetInstanceID() != id)
+        if (GetInstanceID() != id)
             return;
 
         if (health - damageReceived > 0)

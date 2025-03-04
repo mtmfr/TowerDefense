@@ -52,7 +52,7 @@ public class ESM_MovingState : ESM_EnemyBaseState
     {
         base.OnCollisionEnter(collision);
 
-        if (!collision.gameObject.TryGetComponent<Tile>(out _))
+        if (collision.gameObject.TryGetComponent<Tower>(out _))
             enemy.ChangeState(new ESM_AttackingState(enemy, enemy.attackPower, enemy.delayBetweenAttack, enemy.attackAnimName, collision.gameObject));
     }
 

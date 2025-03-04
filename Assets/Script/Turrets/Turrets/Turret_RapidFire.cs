@@ -1,59 +1,37 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Turret_RapidFire : BaseTurrets
 {
-    bool canAttack = false;
-    int muzzleEndId;
+    MuzzleFlash flash;
 
     protected override void Attack()
     {
-        if (canAttack == true)
+        enemyToTarget = GetClosestEnemy();
+
+        if (!CanAttackEnemy(enemyToTarget))
+            return;
+
+        LookAtEnemy(enemyToTarget);
+
+        if (bulletShot >= numberOfBullet)
         {
-            Vector3 enemyPosition = enemyToTarget.transform.position;
-            enemyPosition.y = turretBarrel.transform.position.y;
-            turretBarrel.transform.LookAt(enemyPosition);
-
-            if (bulletShot < numberOfBullet)
-            {
-                if (bulletTimer >= timeBetweenBullets)
-                {
-                    muzzleEndId = bulletShot % 2;
-
-                    MuzzleFlash flash = ObjectPool.GetObject(shotEffect, muzzleEnd[muzzleEndId].position, muzzleEnd[muzzleEndId].rotation);
-                    flash.StartEffect();
-                    HealthEvent.InflictDamage(enemyToTarget.gameObject.GetInstanceID(), attackPower);
-                    bulletTimer = 0;
-
-                    bulletShot++;
-                }
-                else bulletTimer += Time.deltaTime;
-            }
-            else canAttack = false;
+            attackTimer = 0;
+            bulletShot = 0;
+            return;
         }
+
+        if (bulletTimer < timeBetweenBullets)
+            bulletTimer += Time.deltaTime;
         else
         {
-            if (attackTimer >= timeBetweenAttack)
-            {
-                enemyToTarget = GetClosestEnemy();
+            int muzzleEndId = bulletShot % 2;
 
-                if (enemyToTarget == null)
-                {
-                    attackTimer += Time.deltaTime;
-                    return;
-                }                    
+            flash = ObjectPool.GetObject(shotEffect, muzzleEnd[muzzleEndId].position, muzzleEnd[muzzleEndId].rotation);
+            flash.StartEffect();
+            HealthEvent.InflictDamage(enemyToTarget.GetInstanceID(), attackPower);
+            bulletTimer = 0;
 
-                if (enemyToTarget.gameObject.activeInHierarchy == false)
-                {
-                    enemyToTarget = null;
-                    return;
-                }
-
-                bulletShot = 0;
-                canAttack = true;
-                attackTimer = 0;
-            }
-            else attackTimer += Time.deltaTime;
+            bulletShot++;
         }
     }
 }

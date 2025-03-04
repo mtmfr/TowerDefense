@@ -28,19 +28,14 @@ public abstract class BaseTurrets : MonoBehaviour
     protected int bulletShot = 0;
     #endregion
 
-    private List<Enemy> enemiesInRange = new();
+    protected List<Enemy> enemiesInRange = new();
     protected Enemy enemyToTarget;
 
     private void Start()
     {
         maxLevel = turretsStats.Count;
-        int id = level - 1;
-        attackPower = turretsStats[id].attack;
-        attackRange = turretsStats[id].range;
-        timeBetweenAttack = turretsStats[id].attackCooldown;
-        timeBetweenBullets = turretsStats[id].bulletsCooldown;
-        numberOfBullet = turretsStats[id].bulletsToFire;
-        shotEffect = turretsStats[id].firedEffect;
+
+        SetStats(level - 1, true);
 
         col = GetComponent<SphereCollider>();
         col.radius = attackRange;
@@ -63,6 +58,8 @@ public abstract class BaseTurrets : MonoBehaviour
         Attack();
     }
 
+    #region Trigger events
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out Enemy enemy))
@@ -81,9 +78,48 @@ public abstract class BaseTurrets : MonoBehaviour
         if (enemiesInRange.Count == 0)
             attackTimer = timeBetweenAttack;
     }
+    #endregion
 
-    protected abstract void Attack();
+    #region stats setter 
+    private void SetStats(int id, bool setShotEffect = false)
+    {
+        attackPower = turretsStats[id].attack;
+        attackRange = turretsStats[id].range;
 
+        timeBetweenAttack = turretsStats[id].attackCooldown;
+        timeBetweenBullets = turretsStats[id].bulletsCooldown;
+
+        numberOfBullet = turretsStats[id].bulletsToFire;
+
+        if (setShotEffect == true)
+            shotEffect = turretsStats[id].firedEffect;
+    }
+
+    private void LevelUp(BaseTurrets upgradedTurret)
+    {
+        //Check if the turret can gain one level
+        if (upgradedTurret != this)
+            return;
+
+        if (level >= maxLevel || level + 1 > maxLevel)
+            return;
+
+        //Check for gold
+        if (GameManager.gold - turretsStats[level].cost < 0)
+            return;
+
+        //Level up;
+        level++;
+
+        int id = level - 1;
+
+        GameManager.UseGold(turretsStats[id].cost);
+
+        SetStats(id);
+    }
+    #endregion
+
+    #region enemies in range
     private void ClearEnemiesInRange(GameState gameState)
     {
         if (gameState != GameState.Shop)
@@ -102,35 +138,41 @@ public abstract class BaseTurrets : MonoBehaviour
 
         return closestEnemy;
     }
+    #endregion
 
-    private void LevelUp(BaseTurrets upgradedTurret)
+    #region attack
+    protected abstract void Attack();
+
+    /// <summary>
+    /// Check if the turrets can attack enemies
+    /// </summary>
+    /// <returns>true if the cooldown is finished and there is an enemy to attack</returns>
+    protected bool CanAttackEnemy(Enemy target)
     {
-        //Check if the turret should gain one level
-        if (upgradedTurret != this)
-            return;
+        if (attackTimer < timeBetweenAttack)
+        {
+            attackTimer += Time.deltaTime;
+            return false;
+        }
 
-        if (level >= maxLevel)
-            return;
+        if (target == null || !target.isActiveAndEnabled)
+        {
+            enemiesInRange.Remove(target);
+            return false;
+        }
 
-        if (level + 1 > maxLevel)
-            return;
-
-        level++;
-
-        int id = level - 1;
-
-        //Check for gold
-        if (GameManager.gold - turretsStats[id].cost < 0)
-            return;
-
-        Debug.Log("level up");
-        GameManager.UseGold(turretsStats[level].cost);
-
-
-        attackPower = turretsStats[id].attack;
-        attackRange = turretsStats[id].range;
-        timeBetweenAttack = turretsStats[id].attackCooldown;
-        timeBetweenBullets = turretsStats[id].bulletsCooldown;
-        numberOfBullet = turretsStats[id].bulletsToFire;
+        return true;
     }
+    #endregion
+
+    protected void LookAtEnemy(Enemy enemyToLook)
+    {
+        if (!enemyToLook)
+            return;
+
+        Vector3 enemyPosition = enemyToLook.transform.position;
+        enemyPosition.y = turretBarrel.transform.position.y;
+        turretBarrel.transform.LookAt(enemyPosition);
+    }
+
 }
